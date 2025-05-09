@@ -35,6 +35,10 @@ function getImageSrc(src?: string): string {
 const NewsCard: React.FC<NewsCardProps> = ({
   title, position, rank, videoCount, viewsCount, likesCount, commentsCount, coverImg, hotValue, eventDate, owner, link, pubLocation, source }) => {
   const formattedDate = formatEventDate(eventDate);
+  // Random image height between 40% and 100% of 220px
+  const minHeight = 0.4 * 220;
+  const maxHeight = 220;
+  const imgHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
   return (
     <div
       style={{
@@ -83,7 +87,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
       </span>
 
       {coverImg && (
-        <div style={{ width: '100%', aspectRatio: '16/9', background: '#f8f8f8', position: 'relative' }}>
+        <div style={{ width: '100%', height: imgHeight, minHeight: minHeight, maxHeight: maxHeight, background: '#f8f8f8', position: 'relative' }}>
           <img
             src={getImageSrc(coverImg)}
             alt={title}

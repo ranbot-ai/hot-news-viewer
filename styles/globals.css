@@ -46,16 +46,8 @@ h1 {
 
 .news-grid {
   display: grid;
-  grid-template-columns: 1fr;
   row-gap: 5px;
   column-gap: 50px;
   width: 100%;
-  max-width: 760px;
   margin: 0 auto;
-}
-
-@media (min-width: 600px) {
-  .news-grid {
-    grid-template-columns: 1fr 1fr;
-  }
 }
