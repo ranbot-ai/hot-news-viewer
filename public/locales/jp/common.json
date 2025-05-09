@@ -1,0 +1,43 @@
+{
+  "appTitle": "ホットニュースビューア",
+  "source": {
+    "douyin": "Douyin",
+    "bilibili": "Bilibili",
+    "netease": "163ニュース"
+  },
+  "noNews": "ホットニュースが見つかりません。",
+  "loading": "読み込み中...",
+  "error": "ホットニュースの取得に失敗しました。",
+  "views": "閲覧数",
+  "likes": "いいね",
+  "comments": "コメント",
+  "hot": "ホット値",
+  "date": "日付",
+  "location": "場所",
+  "sourceLabel": "ソース",
+  "videoCount": "動画数",
+  "owner": "所有者",
+  "loadMore": "もっと読み込む",
+  "github": "GitHub",
+  "linkedin": "LinkedIn",
+  "ranbot": "RanBOT",
+  "linktr": "LinkTR",
+  "inkedtop": "Inked Top",
+  "lang": {
+    "en": "英語",
+    "zh": "中国語",
+    "fr": "フランス語",
+    "jp": "日本語"
+  },
+  "today": "今日",
+  "fetchError": "ホットニュースの取得に失敗しました。",
+  "errors": {
+    "douyin": "Douyinのホットニュースの取得に失敗しました。",
+    "bilibili": "Bilibiliのホットニュースの取得に失敗しました。",
+    "netease": "163のホットニュースの取得に失敗しました。",
+    "imageProxyMissing": "URLパラメータがありません",
+    "imageProxyFailed": "画像の取得に失敗しました",
+    "unknownSource": "不明またはサポートされていないソースです。",
+    "fetchSource": "ソースのニュース取得に失敗しました: {{source}}"
+  }
+}

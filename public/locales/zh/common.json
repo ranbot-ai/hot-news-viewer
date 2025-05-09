@@ -1,0 +1,32 @@
+{
+  "appTitle": "热点新闻",
+  "source": {
+    "douyin": "抖音",
+    "bilibili": "B站",
+    "netease": "163新闻"
+  },
+  "noNews": "暂无热点新闻",
+  "loading": "加载中...",
+  "error": "获取热点新闻失败。",
+  "views": "播放量",
+  "likes": "点赞数",
+  "comments": "评论数",
+  "hot": "热度",
+  "date": "日期",
+  "location": "地点",
+  "sourceLabel": "来源",
+  "videoCount": "视频数",
+  "owner": "发布者",
+  "loadMore": "加载更多",
+  "github": "GitHub",
+  "linkedin": "LinkedIn",
+  "ranbot": "RanBOT",
+  "linktr": "LinkTR",
+  "inkedtop": "Inked Top",
+  "lang": {
+    "en": "英文",
+    "zh": "中文",
+    "fr": "法语",
+    "jp": "日语"
+  }
+}

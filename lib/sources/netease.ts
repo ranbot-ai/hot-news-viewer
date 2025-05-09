@@ -1,10 +1,16 @@
 import axios from "axios";
 import { NewsCardProps } from "../../components/NewsCard";
 
-const NETEASE_API = "https://m.163.com/fe/api/hot/news/flow";
+const NETEASE_DOMAIN = "https://m.163.com";
+const NETEASE_API = `${NETEASE_DOMAIN}/fe/api/hot/news/flow`;
 
 export async function fetchNeteaseNews(): Promise<NewsCardProps[]> {
-  const response = await axios.get(NETEASE_API);
+  const response = await axios.get(NETEASE_API, {
+    headers: {
+      "User-Agent": "Mozilla/5.0",
+      Referer: NETEASE_DOMAIN,
+    },
+  });
   const list = response.data?.data?.list || [];
 
   return list.map((item: any, idx: number) => ({

@@ -4,13 +4,13 @@ import axios from 'axios';
 import Head from 'next/head';
 import Masonry from 'react-masonry-css';
 import InfiniteScroll from 'react-infinite-scroll-component';
-
-const SOURCES = [
-  { key: 'douyin', label: '抖音', icon: 'fa-music', color: '#111' },
-  { key: 'bilibili', label: 'B 站', icon: 'fa-tv', color: '#00a1d6' },
-  { key: 'netease', label: '网易新闻', icon: 'fa-newspaper-o', color: '#c00' },
-  // Future: add more sources here
-];
+import { useTranslation } from 'next-i18next';
+import { FaGlobe } from 'react-icons/fa';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { LINKS } from '../lib/links';
+import { SOURCES } from '../lib/sources';
+import { useRouter } from 'next/router';
 
 const fetchNews = async (source: string): Promise<NewsCardProps[]> => {
   if (['douyin', 'bilibili', 'netease'].includes(source)) {
@@ -21,6 +21,9 @@ const fetchNews = async (source: string): Promise<NewsCardProps[]> => {
 };
 
 const HomePage: React.FC = () => {
+  const { t, i18n } = useTranslation('common');
+
+  const router = useRouter();
   const [news, setNews] = useState<NewsCardProps[]>([]);
   const [displayedNews, setDisplayedNews] = useState<NewsCardProps[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -49,7 +52,9 @@ const HomePage: React.FC = () => {
         setDisplayedNews(newsArr.slice(0, 12));
         setHasMore(newsArr.length > 12);
       })
-      .catch(() => setError('Failed to fetch hot news.'))
+      .catch((error) => {
+        setError(t('fetchError'));
+      })
       .finally(() => setLoading(false));
   }, [source]);
 
@@ -71,7 +76,7 @@ const HomePage: React.FC = () => {
   return (
     <>
       <Head>
-        <title> 热点新闻 - Encore Shao </title>
+        <title>{t('pageTitle')}</title>
       </Head>
       <header style={{
         width: '100%',
@@ -104,18 +109,72 @@ const HomePage: React.FC = () => {
             cursor: 'pointer',
           }}>
             <i className="fa fa-fire" style={{ color: '#ff3b30', marginRight: 12, fontSize: 32, verticalAlign: 'middle' }} aria-hidden="true" />
-            热点新闻
+            {t('appTitle')}
           </span>
           <nav style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
-            <a href="https://github.com/ranbot-ai" target="_blank" rel="noopener noreferrer" title="GitHub" style={{ color: '#222', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <a href={LINKS.github} target="_blank" rel="noopener noreferrer" title={t('github')} style={{ color: '#222', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
               <i className="fa fa-github" aria-hidden="true" style={{ fontSize: 24, verticalAlign: 'middle' }} />
-              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>GitHub</span>
+              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>{t('github')}</span>
             </a>
-            <a href="https://linkedin.com/in/ranbot-ai" target="_blank" rel="noopener noreferrer" title="LinkedIn" style={{ color: '#0077b5', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" title={t('linkedin')} style={{ color: '#0077b5', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
               <i className="fa fa-linkedin-square" aria-hidden="true" style={{ fontSize: 24, verticalAlign: 'middle' }} />
-              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>LinkedIn</span>
+              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>{t('linkedin')}</span>
             </a>
-            <a href="https://ranbot.online" target="_blank" rel="noopener noreferrer" title="RanBOT" style={{ color: '#222', fontSize: 18, fontWeight: 600, textDecoration: 'none', transition: 'color 0.18s' }}>RanBOT</a>
+            <a href={LINKS.ranbot} target="_blank" rel="noopener noreferrer" title={t('ranbot')} style={{ color: '#222', fontSize: 18, fontWeight: 600, textDecoration: 'none', transition: 'color 0.18s' }}>{t('ranbot')}</a>
+            {/* Language Switcher */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 18 }}>
+              {(() => {
+                const LANGS = [
+                  { code: 'zh', label: t('lang.zh') },
+                  { code: 'en', label: t('lang.en') },
+                  { code: 'fr', label: t('lang.fr') },
+                  { code: 'jp', label: t('lang.jp') },
+                ];
+                const handleLanguageChange = (lang: string) => {
+                  router.push(router.asPath, router.asPath, { locale: lang });
+                };
+
+                return (
+                  <>
+                    <FaGlobe
+                      style={{
+                        fontSize: 20,
+                        color: LANGS.some(l => l.code === i18n.language) ? '#ff3b30' : '#bbb',
+                        marginRight: 2,
+                        verticalAlign: 'middle',
+                        transition: 'color 0.18s',
+                      }}
+                    />
+                    {LANGS.map((lang, idx) => (
+                      <React.Fragment key={lang.code}>
+                        <button
+                          onClick={() => handleLanguageChange(lang.code)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: i18n.language === lang.code ? '#ff3b30' : '#222',
+                            fontWeight: i18n.language === lang.code ? 700 : 500,
+                            fontSize: 17,
+                            padding: '4px 10px',
+                            borderRadius: 8,
+                            cursor: 'pointer',
+                            transition: 'color 0.18s, background 0.18s',
+                            outline: 'none',
+                            textDecoration: i18n.language === lang.code ? 'underline' : 'none',
+                          }}
+                          aria-pressed={i18n.language === lang.code}
+                        >
+                          {lang.label}
+                        </button>
+                        {idx < LANGS.length - 1 && (
+                          <span style={{ color: '#bbb', fontSize: 15, fontWeight: 400 }}>|</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </>
+                );
+              })()}
+            </div>
           </nav>
         </div>
       </header>
@@ -175,7 +234,7 @@ const HomePage: React.FC = () => {
                   aria-pressed={source === s.key}
                 >
                   <i className={`fa ${s.icon}`} style={{ color: s.color, fontSize: 24, marginRight: 10, verticalAlign: 'middle' }} aria-hidden="true" />
-                  {s.label}
+                  {t(`source.${s.key}`)}
                 </button>
               ))}
             </div>
@@ -184,17 +243,18 @@ const HomePage: React.FC = () => {
             {loading ? (
               <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '48px 0' }}>
                 <div className="apple-spinner" />
+                <div style={{ marginTop: 12, color: '#888', fontSize: 16 }}>{t('loading')}</div>
               </div>
             ) : error ? (
-              <p style={{ color: 'red', textAlign: 'center', gridColumn: '1 / -1' }}>{error}</p>
+              <p style={{ color: 'red', textAlign: 'center', gridColumn: '1 / -1' }}>{t('error')}</p>
             ) : displayedNews.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#aaa', gridColumn: '1 / -1' }}>No hot news found.</p>
+              <p style={{ textAlign: 'center', color: '#aaa', gridColumn: '1 / -1' }}>{t('noNews')}</p>
             ) : (
               <InfiniteScroll
                 dataLength={displayedNews.length}
                 next={fetchMoreData}
                 hasMore={hasMore}
-                loader={<div style={{ textAlign: 'center', padding: 32 }}><div className="apple-spinner" /></div>}
+                loader={<div style={{ textAlign: 'center', padding: 32 }}><div className="apple-spinner" /><div style={{ marginTop: 12, color: '#888', fontSize: 16 }}>{t('loading')}</div></div>}
                 style={{ overflow: 'visible' }}
               >
                 <Masonry
@@ -258,15 +318,15 @@ const HomePage: React.FC = () => {
         letterSpacing: '0',
       }}>
         <nav style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 40, marginBottom: 24, minHeight: 100, padding: '10px 0' }}>
-          <a href="https://github.com/ranbot-ai" target="_blank" rel="noopener noreferrer" title="GitHub" style={{ color: '#222', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <a href={LINKS.github} target="_blank" rel="noopener noreferrer" title={t('github')} style={{ color: '#222', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
             <i className="fa fa-github" aria-hidden="true" style={{ fontSize: 24, verticalAlign: 'middle' }} />
-            <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>GitHub</span>
+            <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>{t('github')}</span>
           </a>
-          <a href="https://linkedin.com/in/ranbot-ai" target="_blank" rel="noopener noreferrer" title="LinkedIn" style={{ color: '#0077b5', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" title={t('linkedin')} style={{ color: '#0077b5', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
             <i className="fa fa-linkedin-square" aria-hidden="true" style={{ fontSize: 24, verticalAlign: 'middle' }} />
-            <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>LinkedIn</span>
+            <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>{t('linkedin')}</span>
           </a>
-          <a href="https://ranbot.online" target="_blank" rel="noopener noreferrer" title="RanBOT" style={{ color: '#222', fontSize: 18, fontWeight: 600, textDecoration: 'none', transition: 'color 0.18s' }}>RanBOT</a>
+          <a href={LINKS.ranbot} target="_blank" rel="noopener noreferrer" title={t('ranbot')} style={{ color: '#222', fontSize: 18, fontWeight: 600, textDecoration: 'none', transition: 'color 0.18s' }}>{t('ranbot')}</a>
         </nav>
         <span>
           &copy; {new Date().getFullYear()} &nbsp;
@@ -293,5 +353,11 @@ const HomePage: React.FC = () => {
     </>
   );
 };
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'zh', ['common'])),
+  },
+});
 
 export default HomePage;

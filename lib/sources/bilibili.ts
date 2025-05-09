@@ -18,16 +18,23 @@ export interface NewsItem {
   };
 }
 
-const BILIBILI_API =
-  "https://api.bilibili.com/x/web-interface/popular?ps=50&pn=1";
+const BILIBILI_DOMAIN = "https://www.bilibili.com";
+const BILIBILI_API_DOMAIN = "https://api.bilibili.com";
+const BILIBILI_API = `${BILIBILI_API_DOMAIN}/x/web-interface/popular?ps=50&pn=1`;
 
 export async function fetchBilibiliNews(): Promise<NewsItem[]> {
-  const response = await axios.get(BILIBILI_API);
+  const response = await axios.get(BILIBILI_API, {
+    headers: {
+      "User-Agent": "Mozilla/5.0",
+      Referer: BILIBILI_DOMAIN,
+    },
+  });
+
   const list = response.data?.data?.list || [];
   return list.map((item: any, idx: number) => ({
     title: item.title,
     position: idx + 1,
-    link: "https://www.bilibili.com/video/" + item.bvid,
+    link: `${BILIBILI_DOMAIN}/video/${item.bvid}`,
     viewsCount:
       typeof item.stat?.view === "number"
         ? item.stat.view

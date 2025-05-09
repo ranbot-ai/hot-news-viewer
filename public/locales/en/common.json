@@ -1,0 +1,32 @@
+{
+  "appTitle": "Hot News",
+  "source": {
+    "douyin": "Douyin",
+    "bilibili": "Bilibili",
+    "netease": "163 News"
+  },
+  "noNews": "No hot news found.",
+  "loading": "Loading...",
+  "error": "Failed to fetch hot news.",
+  "views": "Views",
+  "likes": "Likes",
+  "comments": "Comments",
+  "hot": "Hot Value",
+  "date": "Date",
+  "location": "Location",
+  "sourceLabel": "Source",
+  "videoCount": "Videos",
+  "owner": "Owner",
+  "loadMore": "Load More",
+  "github": "GitHub",
+  "linkedin": "LinkedIn",
+  "ranbot": "RanBOT",
+  "linktr": "LinkTR",
+  "inkedtop": "Inked Top",
+  "lang": {
+    "en": "EN",
+    "zh": "Chinese",
+    "fr": "French",
+    "jp": "Japanese"
+  }
+}

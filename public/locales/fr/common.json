@@ -1,0 +1,43 @@
+{
+  "appTitle": "Hot News Viewer",
+  "source": {
+    "douyin": "Douyin",
+    "bilibili": "Bilibili",
+    "netease": "163 Actualités"
+  },
+  "noNews": "Aucune actualité chaude trouvée.",
+  "loading": "Chargement...",
+  "error": "Impossible de récupérer les actualités chaudes.",
+  "views": "Vues",
+  "likes": "J'aime",
+  "comments": "Commentaires",
+  "hot": "Valeur chaude",
+  "date": "Date",
+  "location": "Lieu",
+  "sourceLabel": "Source",
+  "videoCount": "Vidéos",
+  "owner": "Auteur",
+  "loadMore": "Charger plus",
+  "github": "GitHub",
+  "linkedin": "LinkedIn",
+  "ranbot": "RanBOT",
+  "linktr": "LinkTR",
+  "inkedtop": "Inked Top",
+  "lang": {
+    "en": "Anglais",
+    "zh": "Chinois",
+    "fr": "Français",
+    "jp": "Japonais"
+  },
+  "today": "Aujourd'hui",
+  "fetchError": "Impossible de récupérer les actualités chaudes.",
+  "errors": {
+    "douyin": "Échec de la récupération des actualités Douyin.",
+    "bilibili": "Échec de la récupération des actualités Bilibili.",
+    "netease": "Échec de la récupération des actualités 163.",
+    "imageProxyMissing": "Paramètre d'URL manquant",
+    "imageProxyFailed": "Échec de la récupération de l'image",
+    "unknownSource": "Source inconnue ou non prise en charge.",
+    "fetchSource": "Échec de la récupération des actualités pour la source : {{source}}"
+  }
+}

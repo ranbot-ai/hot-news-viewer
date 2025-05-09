@@ -1,5 +1,6 @@
 import React from 'react';
 import { formatEventDate, formatNumberShort } from '../lib/common';
+import { useTranslation } from 'next-i18next';
 
 export interface NewsCardProps {
   title: string;
@@ -35,6 +36,7 @@ function getImageSrc(src?: string): string {
 const NewsCard: React.FC<NewsCardProps> = ({
   title, position, rank, videoCount, viewsCount, likesCount, commentsCount, coverImg, hotValue, eventDate, owner, link, pubLocation, source }) => {
   const formattedDate = formatEventDate(eventDate);
+  const { t } = useTranslation('common');
   // Random image height between 40% and 100% of 220px
   const minHeight = 0.4 * 220;
   const maxHeight = 220;
@@ -150,31 +152,31 @@ const NewsCard: React.FC<NewsCardProps> = ({
         <div style={{ color: '#888', fontSize: 15, marginBottom: 6 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, rowGap: 6 }}>
             {videoCount && (
-              <span title="视频数" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span title={t('videoCount')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <i className="fa fa-film" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
                 <b style={{ color: '#222', fontWeight: 500 }}>{formatNumberShort(videoCount)}</b>
               </span>
             )}
             {viewsCount && (
-              <span title="播放量" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span title={t('views')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <i className="fa fa-play-circle" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
                 <b style={{ color: '#222', fontWeight: 500 }}>{formatNumberShort(viewsCount)}</b>
               </span>
             )}
             {likesCount && (
-              <span title="点赞数" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span title={t('likes')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <i className="fa fa-heart" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
                 <b style={{ color: '#222', fontWeight: 500 }}>{formatNumberShort(likesCount)}</b>
               </span>
             )}
             {commentsCount && (
-              <span title="评论数" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span title={t('comments')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <i className="fa fa-comment" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
                 <b style={{ color: '#222', fontWeight: 500 }}>{formatNumberShort(commentsCount)}</b>
               </span>
             )}
             {hotValue && (
-              <span title="热度" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span title={t('hot')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                 <i className="fa fa-fire" aria-hidden="true" style={{ fontSize: 15, color: '#e67e22', opacity: 0.8 }} />
                 <b style={{ color: '#e67e22', fontWeight: 500 }}>{formatNumberShort(hotValue)}</b>
               </span>
@@ -183,20 +185,20 @@ const NewsCard: React.FC<NewsCardProps> = ({
         </div>
 
         <div style={{ color: '#aaa', fontSize: 15, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, rowGap: 6 }}>
-          <span title="Date" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span title={t('date')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <i className="fa fa-calendar" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
             <span>{formattedDate}</span>
           </span>
 
           {pubLocation && (
-            <span title="Location" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span title={t('location')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <i className="fa fa-map-marker" aria-hidden="true" style={{ fontSize: 15, color: '#0071e3', opacity: 0.7 }} />
               <span>{pubLocation}</span>
             </span>
           )}
 
           {source && (
-            <span title="Source" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span title={t('sourceLabel')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <i className="fa fa-newspaper-o" aria-hidden="true" style={{ fontSize: 15, color: '#0071e3', opacity: 0.7 }} />
               <span style={{ color: '#666' }}>{source}</span>
             </span>
