@@ -4,12 +4,13 @@ import axios from 'axios';
 
 const SOURCES = [
   { key: 'douyin', label: 'Douyin' },
+  { key: 'bilibili', label: 'Bilibili' },
   // Future: add more sources here
 ];
 
 const fetchNews = async (source: string): Promise<NewsCardProps[]> => {
-  if (source === 'douyin') {
-    const res = await axios.get('/api/douyin');
+  if (source === 'douyin' || source === 'bilibili') {
+    const res = await axios.get(`/api/${source}`);
     return res.data.news || [];
   }
   return [];
@@ -20,6 +21,15 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [source, setSource] = useState('douyin');
+
+  // Clear news immediately on source switch
+  const handleSourceSwitch = (newSource: string) => {
+    if (newSource !== source) {
+      setNews([]);
+      setLoading(true);
+      setSource(newSource);
+    }
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -44,7 +54,7 @@ const HomePage: React.FC = () => {
           {SOURCES.map(s => (
             <button
               key={s.key}
-              onClick={() => setSource(s.key)}
+              onClick={() => handleSourceSwitch(s.key)}
               style={{
                 padding: '10px 32px',
                 fontSize: 16,
@@ -66,13 +76,32 @@ const HomePage: React.FC = () => {
         </div>
       </div>
       <div className="news-grid">
-        {loading && <p style={{ textAlign: 'center', color: '#888', gridColumn: '1 / -1' }}>Loading hot news...</p>}
+        {loading && (
+          <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '48px 0' }}>
+            <div className="apple-spinner" />
+          </div>
+        )}
         {error && <p style={{ color: 'red', textAlign: 'center', gridColumn: '1 / -1' }}>{error}</p>}
         {!loading && !error && news.length === 0 && <p style={{ textAlign: 'center', color: '#aaa', gridColumn: '1 / -1' }}>No hot news found.</p>}
         {news.map((item) => (
           <NewsCard key={item.rank + item.title} {...item} />
         ))}
       </div>
+      <style jsx global>{`
+        .apple-spinner {
+          display: inline-block;
+          width: 44px;
+          height: 44px;
+          border: 4px solid #e0e0e0;
+          border-top: 4px solid #0071e3;
+          border-radius: 50%;
+          animation: apple-spin 0.8s linear infinite;
+        }
+        @keyframes apple-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </main>
   );
 };

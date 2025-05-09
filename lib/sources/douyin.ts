@@ -3,10 +3,15 @@ import axios from "axios";
 export interface NewsItem {
   title: string;
   rank: number;
-  videoCount: number;
+  link?: string;
+  videoCount?: number;
   coverImg: string;
   hotValue: number;
   eventDate: string;
+  owner?: {
+    name: string;
+    avatar: string;
+  };
 }
 
 const DOUYIN_API = "https://www.douyin.com/aweme/v1/web/hot/search/list/";
@@ -18,20 +23,11 @@ export async function fetchDouyinNews(): Promise<NewsItem[]> {
       Referer: "https://www.douyin.com/",
     },
   });
-  const trending = response.data?.data?.trending_list || [];
   const word = response.data?.data?.word_list || [];
   const activeTime = response.data?.data?.active_time || "";
-  // Combine and deduplicate
-  const combined = [...trending, ...word];
-  const seen = new Set();
-  const deduped = combined.filter((item) => {
-    if (!item.word || seen.has(item.word)) return false;
-    seen.add(item.word);
-    return true;
-  });
-  return deduped.map((item: any) => ({
+  return word.map((item: any, idx: number) => ({
     title: item.word,
-    rank: item.max_rank,
+    rank: idx + 1,
     videoCount:
       typeof item.video_count === "number"
         ? item.video_count
@@ -42,5 +38,6 @@ export async function fetchDouyinNews(): Promise<NewsItem[]> {
         ? item.hot_value
         : Number(item.hot_value) || 0,
     eventDate: item.event_time || activeTime || "",
+    owner: undefined, // Douyin does not provide owner info in this API
   }));
 }
