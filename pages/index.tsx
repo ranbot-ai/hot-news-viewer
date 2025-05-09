@@ -128,7 +128,7 @@ const HomePage: React.FC = () => {
                   { code: 'zh', label: t('lang.zh') },
                   { code: 'en', label: t('lang.en') },
                   { code: 'fr', label: t('lang.fr') },
-                  { code: 'jp', label: t('lang.jp') },
+                  { code: 'ja', label: t('lang.ja') },
                 ];
                 const handleLanguageChange = (lang: string) => {
                   router.push(router.asPath, router.asPath, { locale: lang });
