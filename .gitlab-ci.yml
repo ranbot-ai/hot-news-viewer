@@ -1,0 +1,35 @@
+image: node:18
+
+stages:
+  - install
+  - build
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+
+install:
+  stage: install
+  script:
+    - npm install
+  artifacts:
+    paths:
+      - node_modules/
+
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - .next
+      - out
+      - node_modules/
+# Uncomment and configure the deploy job for your hosting
+# deploy:
+#   stage: deploy
+#   script:
+#     - echo "Deploy step here (e.g., rsync, scp, vercel, netlify-cli, etc.)"
+#   only:
+#     - main

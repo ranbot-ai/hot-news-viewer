@@ -1,0 +1,38 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Next.js/Vite/Build
+.next/
+dist/
+build/
+out/
+.vite/
+.cache/
+coverage/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# OS/Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Misc
+*.local
+*.tmp
+*.temp
+*.bak
+*.old
