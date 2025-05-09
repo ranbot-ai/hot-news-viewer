@@ -3,6 +3,7 @@ import { formatEventDate, formatNumberShort } from '../lib/common';
 
 export interface NewsCardProps {
   title: string;
+  position: number;
   rank: number;
   videoCount: number;
   viewsCount: number;
@@ -20,6 +21,7 @@ export interface NewsCardProps {
   pubLocation?: string;
 }
 
+
 function getImageSrc(src?: string): string {
   if (!src) return ""; // fallback image path
 
@@ -30,7 +32,7 @@ function getImageSrc(src?: string): string {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
-  title, rank, videoCount, viewsCount, likesCount, commentsCount, rcmdReason, coverImg, hotValue, eventDate, owner, link, pubLocation }) => {
+  title, position, rank, videoCount, viewsCount, likesCount, commentsCount, rcmdReason, coverImg, hotValue, eventDate, owner, link, pubLocation }) => {
   const formattedDate = formatEventDate(eventDate);
   return (
     <div
@@ -39,8 +41,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         borderRadius: 20,
         padding: 0,
         marginBottom: 32,
-        display: 'flex',
-        alignItems: 'center',
+        display: 'block',
         maxWidth: 960,
         minWidth: 420,
         width: '100%',
@@ -77,17 +78,50 @@ const NewsCard: React.FC<NewsCardProps> = ({
           transition: 'background 0.2s',
         }}
       >
-        {rank}
+        {position}
       </span>
-      {coverImg && <div style={{ flex: '0 0 120px', height: 120, background: '#f2f3f7', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 32 }}>
-        <img
-          src={getImageSrc(coverImg)}
-          alt={title}
-          style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: 16, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
-        />
-      </div>}
-      <div style={{ flex: 1, padding: '24px 36px' }}>
-        <div style={{ fontSize: 22, fontWeight: 600, marginBottom: 8, color: '#222', lineHeight: 1.2 }}>
+
+      {coverImg && (
+        <div style={{ width: '100%', aspectRatio: '16/9', background: '#f8f8f8', position: 'relative' }}>
+          <img
+            src={getImageSrc(coverImg)}
+            alt={title}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              display: 'block',
+            }}
+          />
+        </div>
+      )}
+
+      <div style={{ padding: '24px 36px' }}>
+        <div style={{
+          fontSize: 22,
+          fontWeight: 600,
+          marginBottom: 8,
+          color: '#222',
+          lineHeight: 1.2,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10
+        }}>
+          {rank && <span
+            style={{
+              fontSize: 22,
+              color: '#aaa',
+              fontWeight: 500,
+              marginRight: 10,
+              minWidth: 28,
+              textAlign: 'right',
+              letterSpacing: '0.5px'
+            }}
+          >
+            #{rank}
+          </span>}
           {link ? (
             <a
               href={link}
@@ -140,6 +174,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
             )}
           </div>
         </div>
+
         <div style={{ color: '#aaa', fontSize: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
           <i className="fa fa-calendar" aria-hidden="true" title={formattedDate} style={{ marginRight: 6 }} />
           <span>{formattedDate}</span>

@@ -26,7 +26,7 @@ export async function fetchBilibiliNews(): Promise<NewsItem[]> {
   const list = response.data?.data?.list || [];
   return list.map((item: any, idx: number) => ({
     title: item.title,
-    rank: idx + 1,
+    position: idx + 1,
     link: "https://www.bilibili.com/video/" + item.bvid,
     viewsCount:
       typeof item.stat?.view === "number"

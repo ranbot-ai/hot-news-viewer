@@ -2,7 +2,8 @@ import axios from "axios";
 
 export interface NewsItem {
   title: string;
-  rank: number;
+  position: number;
+  rank?: number;
   link?: string;
   videoCount?: number;
   coverImg: string;
@@ -14,20 +15,25 @@ export interface NewsItem {
   };
 }
 
-const DOUYIN_API = "https://www.douyin.com/aweme/v1/web/hot/search/list/";
+const DOUYIN_DOMAIN = "https://www.douyin.com";
+const DOUYIN_API = `${DOUYIN_DOMAIN}/aweme/v1/web/hot/search/list/`;
 
 export async function fetchDouyinNews(): Promise<NewsItem[]> {
   const response = await axios.get(DOUYIN_API, {
     headers: {
       "User-Agent": "Mozilla/5.0",
-      Referer: "https://www.douyin.com/",
+      Referer: DOUYIN_DOMAIN,
     },
   });
+
   const word = response.data?.data?.word_list || [];
   const activeTime = response.data?.data?.active_time || "";
-  return word.map((item: any, idx: number) => ({
+
+  return word.map((item: any) => ({
     title: item.word,
-    rank: idx + 1,
+    link: `${DOUYIN_DOMAIN}/search/${item.word}`,
+    position: item.position,
+    rank: item.max_rank,
     videoCount:
       typeof item.video_count === "number"
         ? item.video_count
