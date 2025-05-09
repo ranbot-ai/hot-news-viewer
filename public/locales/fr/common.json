@@ -1,9 +1,11 @@
 {
   "appTitle": "Hot News Viewer",
+  "pageTitle": "Hot News - Douyin, Bilibili, 163 News, Baidu Hot Search",
   "source": {
     "douyin": "Douyin",
     "bilibili": "Bilibili",
-    "netease": "163 Actualités"
+    "netease": "163 Actualités",
+    "baidu": "Baidu"
   },
   "noNews": "Aucune actualité chaude trouvée.",
   "loading": "Chargement...",

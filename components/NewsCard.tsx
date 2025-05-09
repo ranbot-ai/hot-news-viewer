@@ -185,10 +185,10 @@ const NewsCard: React.FC<NewsCardProps> = ({
         </div>
 
         <div style={{ color: '#aaa', fontSize: 15, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, rowGap: 6 }}>
-          <span title={t('date')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          {eventDate && <span title={t('date')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <i className="fa fa-calendar" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
             <span>{formattedDate}</span>
-          </span>
+          </span>}
 
           {pubLocation && (
             <span title={t('location')} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>

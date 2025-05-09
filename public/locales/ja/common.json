@@ -1,9 +1,11 @@
 {
   "appTitle": "ホットニュースビューア",
+  "pageTitle": "ホットニュース - 抖音、B站、网易新闻、百度热搜",
   "source": {
     "douyin": "Douyin",
     "bilibili": "Bilibili",
-    "netease": "163ニュース"
+    "netease": "163ニュース",
+    "baidu": "百度"
   },
   "noNews": "ホットニュースが見つかりません。",
   "loading": "読み込み中...",

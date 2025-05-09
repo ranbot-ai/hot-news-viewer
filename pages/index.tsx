@@ -13,7 +13,7 @@ import { SOURCES } from '../lib/sources';
 import { useRouter } from 'next/router';
 
 const fetchNews = async (source: string): Promise<NewsCardProps[]> => {
-  if (['douyin', 'bilibili', 'netease'].includes(source)) {
+  if (['douyin', 'bilibili', 'netease', 'baidu'].includes(source)) {
     const res = await axios.get(`/api/${source}`);
     return res.data.news || [];
   }

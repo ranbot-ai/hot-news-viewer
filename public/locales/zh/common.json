@@ -1,9 +1,11 @@
 {
   "appTitle": "热点新闻",
+  "pageTitle": "热点新闻 - 抖音、B站、网易新闻、百度热搜",
   "source": {
     "douyin": "抖音",
     "bilibili": "B站",
-    "netease": "163新闻"
+    "netease": "163新闻",
+    "baidu": "百度"
   },
   "noNews": "暂无热点新闻",
   "loading": "加载中...",

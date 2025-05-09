@@ -1,9 +1,11 @@
 {
   "appTitle": "Hot News",
+  "pageTitle": "Hot News - Douyin, Bilibili, 163 News, Baidu Hot Search",
   "source": {
     "douyin": "Douyin",
     "bilibili": "Bilibili",
-    "netease": "163 News"
+    "netease": "163 News",
+    "baidu": "Baidu"
   },
   "noNews": "No hot news found.",
   "loading": "Loading...",
