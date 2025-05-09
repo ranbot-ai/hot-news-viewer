@@ -7,7 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const t = await getApiTranslator(req);
+  const t = (await getApiTranslator(req)) || ((k: string) => k);
   try {
     const news = await fetchBilibiliNews();
     res.status(200).json({ news });
