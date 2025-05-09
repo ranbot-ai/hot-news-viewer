@@ -4,14 +4,14 @@ import { formatEventDate, formatNumberShort } from '../lib/common';
 export interface NewsCardProps {
   title: string;
   position: number;
-  rank: number;
-  videoCount: number;
-  viewsCount: number;
-  likesCount: number;
-  commentsCount: number;
-  rcmdReason: string;
-  coverImg: string;
-  hotValue: number;
+  rank?: number;
+  videoCount?: number;
+  viewsCount?: number;
+  likesCount?: number;
+  commentsCount?: number;
+  rcmdReason?: string;
+  coverImg?: string;
+  hotValue?: number;
   eventDate: string;
   owner?: {
     name: string;
@@ -19,6 +19,7 @@ export interface NewsCardProps {
   };
   link?: string;
   pubLocation?: string;
+  source?: string;
 }
 
 
@@ -32,7 +33,7 @@ function getImageSrc(src?: string): string {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
-  title, position, rank, videoCount, viewsCount, likesCount, commentsCount, rcmdReason, coverImg, hotValue, eventDate, owner, link, pubLocation }) => {
+  title, position, rank, videoCount, viewsCount, likesCount, commentsCount, coverImg, hotValue, eventDate, owner, link, pubLocation, source }) => {
   const formattedDate = formatEventDate(eventDate);
   return (
     <div
@@ -86,6 +87,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
           <img
             src={getImageSrc(coverImg)}
             alt={title}
+            className="news-card-img"
             style={{
               width: '100%',
               height: '100%',
@@ -93,6 +95,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
               display: 'block',
+              transition: 'transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1), filter 0.25s cubic-bezier(.4,0,.2,1)',
             }}
           />
         </div>
@@ -175,16 +178,26 @@ const NewsCard: React.FC<NewsCardProps> = ({
           </div>
         </div>
 
-        <div style={{ color: '#aaa', fontSize: 15, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <i className="fa fa-calendar" aria-hidden="true" title={formattedDate} style={{ marginRight: 6 }} />
-          <span>{formattedDate}</span>
+        <div style={{ color: '#aaa', fontSize: 15, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, rowGap: 6 }}>
+          <span title="Date" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <i className="fa fa-calendar" aria-hidden="true" style={{ fontSize: 15, opacity: 0.7 }} />
+            <span>{formattedDate}</span>
+          </span>
+
+          {pubLocation && (
+            <span title="Location" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <i className="fa fa-map-marker" aria-hidden="true" style={{ fontSize: 15, color: '#0071e3', opacity: 0.7 }} />
+              <span>{pubLocation}</span>
+            </span>
+          )}
+
+          {source && (
+            <span title="Source" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <i className="fa fa-newspaper-o" aria-hidden="true" style={{ fontSize: 15, color: '#0071e3', opacity: 0.7 }} />
+              <span style={{ color: '#666' }}>{source}</span>
+            </span>
+          )}
         </div>
-        {pubLocation && (
-          <div style={{ color: '#aaa', fontSize: 15, display: 'flex', alignItems: 'center', gap: 8, marginTop: 2 }}>
-            <i className="fa fa-map-marker" aria-hidden="true" title="Location" style={{ marginRight: 6, color: '#0071e3', opacity: 0.7 }} />
-            <span>{pubLocation}</span>
-          </div>
-        )}
 
         {owner?.name && (
           <div style={{ color: '#888', fontSize: 14, marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -198,3 +211,11 @@ const NewsCard: React.FC<NewsCardProps> = ({
 };
 
 export default NewsCard;
+
+<style jsx global>{`
+  .news-card:hover .news-card-img {
+    transform: scale(1.045);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    filter: brightness(1.04) saturate(1.08);
+  }
+`}</style>
