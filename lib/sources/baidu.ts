@@ -11,7 +11,10 @@ export interface BaiduNewsItem {
 }
 
 export async function fetchBaiduNews(): Promise<BaiduNewsItem[]> {
-  const url = "https://top.baidu.com/board?tab=realtime";
+  const url = process.env.BAIDU_NEWS_URL;
+  if (!url) {
+    throw new Error("Missing required BAIDU_NEWS_URL environment variable.");
+  }
   const { data: html } = await axios.get(url, {
     headers: {
       "User-Agent": "Mozilla/5.0",

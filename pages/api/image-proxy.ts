@@ -10,11 +10,17 @@ export default async function handler(
     res.status(400).send("Missing url parameter");
     return;
   }
+  const IMAGE_PROXY_REFERER = process.env.IMAGE_PROXY_REFERER;
+  if (!IMAGE_PROXY_REFERER) {
+    throw new Error(
+      "Missing required IMAGE_PROXY_REFERER environment variable."
+    );
+  }
   try {
     const response = await axios.get(url, {
       responseType: "stream",
       headers: {
-        Referer: "https://www.bilibili.com",
+        Referer: IMAGE_PROXY_REFERER,
         "User-Agent": "Mozilla/5.0",
       },
     });

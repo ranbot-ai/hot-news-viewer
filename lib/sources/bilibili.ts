@@ -18,15 +18,23 @@ export interface NewsItem {
   };
 }
 
-const BILIBILI_DOMAIN = "https://www.bilibili.com";
-const BILIBILI_API_DOMAIN = "https://api.bilibili.com";
-const BILIBILI_API = `${BILIBILI_API_DOMAIN}/x/web-interface/popular?ps=50&pn=1`;
+const BILIBILI_DOMAIN = process.env.BILIBILI_DOMAIN;
+const BILIBILI_API_DOMAIN = process.env.BILIBILI_API_DOMAIN;
+const BILIBILI_API = process.env.BILIBILI_API_URL;
+
+if (!BILIBILI_DOMAIN || !BILIBILI_API_DOMAIN || !BILIBILI_API) {
+  throw new Error("Missing required Bilibili environment variables.");
+}
+
+const BILIBILI_DOMAIN_SAFE = BILIBILI_DOMAIN as string;
+const BILIBILI_API_DOMAIN_SAFE = BILIBILI_API_DOMAIN as string;
+const BILIBILI_API_SAFE = BILIBILI_API as string;
 
 export async function fetchBilibiliNews(): Promise<NewsItem[]> {
-  const response = await axios.get(BILIBILI_API, {
+  const response = await axios.get(BILIBILI_API_SAFE, {
     headers: {
       "User-Agent": "Mozilla/5.0",
-      Referer: BILIBILI_DOMAIN,
+      Referer: BILIBILI_DOMAIN_SAFE,
     },
   });
 
@@ -34,7 +42,7 @@ export async function fetchBilibiliNews(): Promise<NewsItem[]> {
   return list.map((item: any, idx: number) => ({
     title: item.title,
     position: idx + 1,
-    link: `${BILIBILI_DOMAIN}/video/${item.bvid}`,
+    link: `${BILIBILI_DOMAIN_SAFE}/video/${item.bvid}`,
     viewsCount:
       typeof item.stat?.view === "number"
         ? item.stat.view

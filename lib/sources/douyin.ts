@@ -15,14 +15,19 @@ export interface NewsItem {
   };
 }
 
-const DOUYIN_DOMAIN = "https://www.douyin.com";
-const DOUYIN_API = `${DOUYIN_DOMAIN}/aweme/v1/web/hot/search/list/`;
+const DOUYIN_DOMAIN = process.env.DOUYIN_DOMAIN;
+const DOUYIN_API = process.env.DOUYIN_API_URL;
+if (!DOUYIN_DOMAIN || !DOUYIN_API) {
+  throw new Error("Missing required Douyin environment variables.");
+}
+const DOUYIN_DOMAIN_SAFE = DOUYIN_DOMAIN as string;
+const DOUYIN_API_SAFE = DOUYIN_API as string;
 
 export async function fetchDouyinNews(): Promise<NewsItem[]> {
-  const response = await axios.get(DOUYIN_API, {
+  const response = await axios.get(DOUYIN_API_SAFE, {
     headers: {
       "User-Agent": "Mozilla/5.0",
-      Referer: DOUYIN_DOMAIN,
+      Referer: DOUYIN_DOMAIN_SAFE,
     },
   });
 
@@ -31,7 +36,7 @@ export async function fetchDouyinNews(): Promise<NewsItem[]> {
 
   return word.map((item: any) => ({
     title: item.word,
-    link: `${DOUYIN_DOMAIN}/search/${item.word}`,
+    link: `${DOUYIN_DOMAIN_SAFE}/search/${item.word}`,
     position: item.position,
     rank: item.max_rank,
     videoCount:
