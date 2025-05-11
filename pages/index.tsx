@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import NewsCard, { NewsCardProps } from '../components/NewsCard';
 import axios from 'axios';
 import Head from 'next/head';
 import Masonry from 'react-masonry-css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'next-i18next';
-import { FaGlobe } from 'react-icons/fa';
+import { FaGlobe, FaSyncAlt } from 'react-icons/fa';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { LINKS } from '../lib/links';
 import { SOURCES } from '../lib/sources';
 import { useRouter } from 'next/router';
+import { useCachedFetch } from '../hooks/useCachedFetch';
+import { clearNewsCache } from '../utils/cache';
 
 const fetchNews = async (source: string): Promise<NewsCardProps[]> => {
   if (['douyin', 'bilibili', 'netease', 'baidu'].includes(source)) {
-    const res = await axios.get(`/api/${source}`);
-    return res.data.news || [];
+    const res = await fetch(`/api/${source}`);
+    if (!res.ok) throw new Error('Failed to fetch');
+    const data = await res.json();
+    return data.news || [];
   }
   return [];
 };
@@ -24,46 +28,39 @@ const HomePage: React.FC = () => {
   const { t, i18n } = useTranslation('common');
 
   const router = useRouter();
-  const [news, setNews] = useState<NewsCardProps[]>([]);
   const [displayedNews, setDisplayedNews] = useState<NewsCardProps[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: news, loading, error, refresh } = useCachedFetch(
+    `news-douyin`,
+    () => fetchNews('douyin')
+  );
   const [source, setSource] = useState('douyin');
   const [bannerImg, setBannerImg] = useState<string>("");
 
   // Clear news immediately on source switch
   const handleSourceSwitch = (newSource: string) => {
     if (newSource !== source) {
-      setNews([]);
       setDisplayedNews([]);
       setHasMore(true);
-      setLoading(true);
       setSource(newSource);
     }
   };
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    fetchNews(source)
-      .then(newsArr => {
-        setNews(newsArr);
-        setDisplayedNews(newsArr.slice(0, 12));
-        setHasMore(newsArr.length > 12);
-      })
-      .catch((error) => {
-        setError(t('fetchError'));
-      })
-      .finally(() => setLoading(false));
-  }, [source]);
+  React.useEffect(() => {
+    if (news) {
+      setDisplayedNews(news.slice(0, 12));
+      setHasMore(news.length > 12);
+    } else {
+      setDisplayedNews([]);
+      setHasMore(true);
+    }
+  }, [news, source]);
 
   const fetchMoreData = () => {
-    if (displayedNews.length >= news.length) {
+    if (!news || displayedNews.length >= news.length) {
       setHasMore(false);
       return;
     }
-    // Simulate async loading
     setTimeout(() => {
       setDisplayedNews(prev => [
         ...prev,
@@ -71,6 +68,19 @@ const HomePage: React.FC = () => {
       ]);
       if (displayedNews.length + 12 >= news.length) setHasMore(false);
     }, 500);
+  };
+
+  // Clear all news cache and refresh all sources
+  const handleClearCache = async () => {
+    clearNewsCache(['douyin', 'bilibili', 'netease', 'baidu']);
+    // Optionally prefetch all sources to warm cache
+    await Promise.all([
+      fetchNews('douyin'),
+      fetchNews('bilibili'),
+      fetchNews('netease'),
+      fetchNews('baidu'),
+    ]);
+    refresh(); // Refresh current source
   };
 
   return (
@@ -201,7 +211,7 @@ const HomePage: React.FC = () => {
               aria-label="热点新闻"
             />
           )}
-          <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
             <div style={{
               display: 'inline-flex',
               borderRadius: 24,
@@ -238,6 +248,28 @@ const HomePage: React.FC = () => {
                 </button>
               ))}
             </div>
+            <button
+              onClick={handleClearCache}
+              aria-label="Clear cache and refresh all"
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: '50%',
+                border: 'none',
+                background: '#f2f3f7',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                marginLeft: 8,
+                transition: 'background 0.18s, box-shadow 0.18s',
+              }}
+              onMouseOver={e => (e.currentTarget.style.background = '#e5e5ea')}
+              onMouseOut={e => (e.currentTarget.style.background = '#f2f3f7')}
+            >
+              <FaSyncAlt size={22} color="#888" style={{ transition: 'color 0.18s' }} />
+            </button>
           </div>
           <div className="news-grid">
             {loading ? (
@@ -246,7 +278,7 @@ const HomePage: React.FC = () => {
                 <div style={{ marginTop: 12, color: '#888', fontSize: 16 }}>{t('loading')}</div>
               </div>
             ) : error ? (
-              <p style={{ color: 'red', textAlign: 'center', gridColumn: '1 / -1' }}>{t('error')}</p>
+              <p style={{ color: 'red', textAlign: 'center', gridColumn: '1 / -1' }}>{error.message || t('error')}</p>
             ) : displayedNews.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#aaa', gridColumn: '1 / -1' }}>{t('noNews')}</p>
             ) : (

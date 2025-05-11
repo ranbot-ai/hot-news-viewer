@@ -4,8 +4,8 @@
   "source": {
     "douyin": "抖音",
     "bilibili": "B站",
-    "netease": "163新闻",
-    "baidu": "百度"
+    "netease": "网易新闻",
+    "baidu": "百度热搜"
   },
   "noNews": "暂无热点新闻",
   "loading": "加载中...",
