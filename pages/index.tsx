@@ -75,20 +75,14 @@ const HomePage: React.FC = () => {
     clearNewsCache(['douyin', 'bilibili', 'netease', 'baidu']);
     setDisplayedNews([]);
     setHasMore(true);
-    refresh(); // This will trigger loading and fetch new data for the current source
-    // Optionally prefetch all sources to warm cache (uncomment if desired)
-    // await Promise.all([
-    //   fetchNews('douyin'),
-    //   fetchNews('bilibili'),
-    //   fetchNews('netease'),
-    //   fetchNews('baidu'),
-    // ]);
+    refresh();
   };
 
   return (
     <>
       <Head>
         <title>{t('pageTitle')}</title>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </Head>
       <header style={{
         width: '100%',
@@ -273,7 +267,7 @@ const HomePage: React.FC = () => {
               <FaSyncAlt size={22} color="#888" style={{ transition: 'color 0.18s' }} />
             </button>
           </div>
-          <div className="news-grid">
+          <div className="news-grid" style={{ width: '100%', boxSizing: 'border-box' }}>
             {loading ? (
               <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '48px 0' }}>
                 <div className="apple-spinner" />
@@ -292,7 +286,12 @@ const HomePage: React.FC = () => {
                 style={{ overflow: 'visible' }}
               >
                 <Masonry
-                  breakpointCols={{ default: 3, 1100: 2, 700: 1 }}
+                  breakpointCols={{
+                    default: 3,
+                    1200: 2,
+                    900: 2,
+                    700: 1,
+                  }}
                   className="masonry-grid"
                   columnClassName="masonry-grid_column"
                 >
@@ -316,6 +315,25 @@ const HomePage: React.FC = () => {
           }
           .masonry-grid_column > div {
             margin-bottom: 32px;
+          }
+          @media (max-width: 900px) {
+            .masonry-grid_column {
+              padding-left: 12px;
+            }
+            .masonry-grid_column > div {
+              margin-bottom: 18px;
+            }
+          }
+          @media (max-width: 600px) {
+            .masonry-grid {
+              margin-left: -6px;
+            }
+            .masonry-grid_column {
+              padding-left: 6px;
+            }
+            .masonry-grid_column > div {
+              margin-bottom: 10px;
+            }
           }
           .apple-spinner {
             display: inline-block;

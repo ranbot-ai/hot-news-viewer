@@ -1,0 +1,23 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#bgGradient)" />
+  <!-- Chat bubble/news window -->
+  <rect x="16" y="36" width="32" height="14" rx="4" fill="#fff" stroke="#ff9500" stroke-width="2"/>
+  <!-- Flame (hot) -->
+  <path d="M32 16C32 16 24 28 28 38C32 48 40 38 36 28C34 22 32 16 32 16Z" fill="url(#flameGradient)"/>
+  <!-- Radiating lines (multi-source/insight) -->
+  <g stroke="#ff9500" stroke-width="2" stroke-linecap="round">
+    <line x1="32" y1="10" x2="32" y2="4"/>
+    <line x1="44" y1="20" x2="50" y2="14"/>
+    <line x1="20" y1="20" x2="14" y2="14"/>
+  </g>
+  <defs>
+    <linearGradient id="bgGradient" x1="4" y1="4" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#fff"/>
+    </linearGradient>
+    <linearGradient id="flameGradient" x1="24" y1="16" x2="40" y2="38" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ff3b30"/>
+      <stop offset="1" stop-color="#ff9500"/>
+    </linearGradient>
+  </defs>
+</svg>

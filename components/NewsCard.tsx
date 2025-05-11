@@ -68,13 +68,14 @@ const NewsCard: React.FC<NewsCardProps> = ({
         padding: 0,
         marginBottom: 32,
         display: 'block',
-        maxWidth: 960,
-        minWidth: 420,
+        maxWidth: '100%',
+        minWidth: 0,
         width: '100%',
         cursor: 'pointer',
         border: 'none',
         overflow: 'hidden',
         position: 'relative',
+        boxSizing: 'border-box',
       }}
       className="news-card"
     >
@@ -142,7 +143,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
           lineHeight: 1.2,
           display: 'flex',
           alignItems: 'center',
-          gap: 10
+          gap: 10,
+          wordBreak: 'break-word',
         }}>
           {rank && <span
             style={{
@@ -259,5 +261,36 @@ export default NewsCard;
     transform: scale(1.045);
     box-shadow: 0 8px 32px rgba(0,0,0,0.13);
     filter: brightness(1.04) saturate(1.08);
+  }
+
+  @media (max-width: 900px) {
+    .news-card {
+      min-width: 0 !important;
+      max-width: 100% !important;
+    }
+    .news-card > div {
+      padding: 18px 16px !important;
+    }
+    .news-title-link {
+      font-size: 18px !important;
+    }
+  }
+  @media (max-width: 600px) {
+    .news-card {
+      min-width: 0 !important;
+      max-width: 100vw !important;
+      border-radius: 12px !important;
+    }
+    .news-card > div {
+      padding: 12px 8px !important;
+    }
+    .news-title-link {
+      font-size: 16px !important;
+    }
+    .news-rank-badge {
+      width: 24px !important;
+      height: 24px !important;
+      font-size: 13px !important;
+    }
   }
 `}</style>
