@@ -30,11 +30,11 @@ const HomePage: React.FC = () => {
   const router = useRouter();
   const [displayedNews, setDisplayedNews] = useState<NewsCardProps[]>([]);
   const [hasMore, setHasMore] = useState(true);
-  const { data: news, loading, error, refresh } = useCachedFetch(
-    `news-douyin`,
-    () => fetchNews('douyin')
-  );
   const [source, setSource] = useState('douyin');
+  const { data: news, loading, error, refresh } = useCachedFetch(
+    `news-${source}`,
+    () => fetchNews(source)
+  );
   const [bannerImg, setBannerImg] = useState<string>("");
 
   // Clear news immediately on source switch
@@ -73,14 +73,16 @@ const HomePage: React.FC = () => {
   // Clear all news cache and refresh all sources
   const handleClearCache = async () => {
     clearNewsCache(['douyin', 'bilibili', 'netease', 'baidu']);
-    // Optionally prefetch all sources to warm cache
-    await Promise.all([
-      fetchNews('douyin'),
-      fetchNews('bilibili'),
-      fetchNews('netease'),
-      fetchNews('baidu'),
-    ]);
-    refresh(); // Refresh current source
+    setDisplayedNews([]);
+    setHasMore(true);
+    refresh(); // This will trigger loading and fetch new data for the current source
+    // Optionally prefetch all sources to warm cache (uncomment if desired)
+    // await Promise.all([
+    //   fetchNews('douyin'),
+    //   fetchNews('bilibili'),
+    //   fetchNews('netease'),
+    //   fetchNews('baidu'),
+    // ]);
   };
 
   return (

@@ -1,6 +1,8 @@
 import React from 'react';
 import { formatEventDate, formatNumberShort } from '../lib/common';
 import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
+import { PROXY_IMAGE_DOMAINS } from '../config/imageProxyDomains';
 
 export interface NewsCardProps {
   title: string;
@@ -23,12 +25,29 @@ export interface NewsCardProps {
   source?: string;
 }
 
+// Generic blur placeholder (SVG base64)
+const BLUR_PLACEHOLDER =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjE3MCIgdmlld0JveD0iMCAwIDMwMCAxNzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIxNzAiIGZpbGw9IiNlZWUiLz48L3N2Zz4=';
+const FALLBACK_IMG = '/fallback.png'; // Place a fallback.png in your public/ directory
+
+const PROXY_ALL_IMAGES = typeof process !== 'undefined' && typeof process.env !== 'undefined' && process.env.NEXT_PUBLIC_PROXY_ALL_IMAGES === 'true';
+
+function shouldProxy(src: string): boolean {
+  try {
+    const url = new URL(src.startsWith('//') ? 'https:' + src : src);
+    return PROXY_IMAGE_DOMAINS.some(domain => url.hostname.endsWith(domain));
+  } catch {
+    return false;
+  }
+}
 
 function getImageSrc(src?: string): string {
-  if (!src) return ""; // fallback image path
-
-  if (src.includes('hdslb.com')) {
-    return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+  if (!src) return '';
+  if (src.startsWith('//')) src = 'https:' + src;
+  if (src.startsWith('http')) {
+    if (PROXY_ALL_IMAGES || shouldProxy(src)) {
+      return `/api/image-proxy?url=${encodeURIComponent(src)}`;
+    }
   }
   return src;
 }
@@ -90,18 +109,25 @@ const NewsCard: React.FC<NewsCardProps> = ({
 
       {coverImg && (
         <div style={{ width: '100%', height: imgHeight, minHeight: minHeight, maxHeight: maxHeight, background: '#f8f8f8', position: 'relative' }}>
-          <img
+          <Image
             src={getImageSrc(coverImg)}
             alt={title}
+            fill
+            sizes="(max-width: 700px) 100vw, (max-width: 1200px) 50vw, 420px"
             className="news-card-img"
             style={{
-              width: '100%',
-              height: '100%',
               objectFit: 'cover',
               borderTopLeftRadius: 20,
               borderTopRightRadius: 20,
               display: 'block',
               transition: 'transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s cubic-bezier(.4,0,.2,1), filter 0.25s cubic-bezier(.4,0,.2,1)',
+            }}
+            placeholder="blur"
+            blurDataURL={BLUR_PLACEHOLDER}
+            priority={position === 1}
+            onError={e => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== FALLBACK_IMG) target.src = FALLBACK_IMG;
             }}
           />
         </div>
@@ -207,7 +233,17 @@ const NewsCard: React.FC<NewsCardProps> = ({
 
         {owner?.name && (
           <div style={{ color: '#888', fontSize: 14, marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img src={getImageSrc(owner.avatar)} alt={owner.name} style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }} />
+            <Image
+              src={getImageSrc(owner.avatar)}
+              alt={owner.name}
+              width={28}
+              height={28}
+              style={{ borderRadius: '50%', objectFit: 'cover' }}
+              onError={e => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== FALLBACK_IMG) target.src = FALLBACK_IMG;
+              }}
+            />
             <span>{owner.name}</span>
           </div>
         )}
