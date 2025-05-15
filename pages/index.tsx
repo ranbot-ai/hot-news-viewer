@@ -1,81 +1,58 @@
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import NewsCard, { NewsCardProps } from '../components/NewsCard';
-import axios from 'axios';
 import Head from 'next/head';
 import Masonry from 'react-masonry-css';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { useTranslation } from 'next-i18next';
-import { FaGlobe, FaSyncAlt } from 'react-icons/fa';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { LINKS } from '../lib/links';
 import { SOURCES } from '../lib/sources';
 import { useRouter } from 'next/router';
 import { useCachedFetch } from '../hooks/useCachedFetch';
-import { clearNewsCache } from '../utils/cache';
+import Header from '../components/Header';
+import SourceNav from '../components/SourceNav';
+import Link from 'next/link';
 
-const fetchNews = async (source: string): Promise<NewsCardProps[]> => {
-  if (['douyin', 'bilibili', 'netease', 'baidu'].includes(source)) {
-    const res = await fetch(`/api/${source}`);
-    if (!res.ok) throw new Error('Failed to fetch');
-    const data = await res.json();
-    return data.news || [];
-  }
-  return [];
-};
 
 const HomePage: React.FC = () => {
   const { t, i18n } = useTranslation('common');
-
-  const router = useRouter();
-  const [displayedNews, setDisplayedNews] = useState<NewsCardProps[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [source, setSource] = useState('douyin');
-  const { data: news, loading, error, refresh } = useCachedFetch(
-    `news-${source}`,
-    () => fetchNews(source)
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [stickSourceNav, setStickSourceNav] = React.useState(false);
+  const [showHeader, setShowHeader] = React.useState(true);
+  const [currentSource, setCurrentSource] = React.useState('douyin');
+  const { data, loading, error } = useCachedFetch<NewsCardProps[]>(
+    `news_${currentSource}`,
+    () => fetch(`/api/${currentSource}`).then(res => res.json().then(data => data.news || [])),
+    60 * 60 * 1000
   );
-  const [bannerImg, setBannerImg] = useState<string>("");
-
-  // Clear news immediately on source switch
-  const handleSourceSwitch = (newSource: string) => {
-    if (newSource !== source) {
-      setDisplayedNews([]);
-      setHasMore(true);
-      setSource(newSource);
-    }
+  const newsList: NewsCardProps[] = data || [];
+  const breakpointColumnsObj = {
+    default: 4,
+    1400: 3,
+    900: 2,
+    600: 1,
   };
 
   React.useEffect(() => {
-    if (news) {
-      setDisplayedNews(news.slice(0, 12));
-      setHasMore(news.length > 12);
-    } else {
-      setDisplayedNews([]);
-      setHasMore(true);
-    }
-  }, [news, source]);
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      const threshold = window.innerHeight * 0.10; // 10vh
+      if (scrollY > threshold) {
+        setStickSourceNav(true);
+        setShowHeader(false);
+      } else {
+        setStickSourceNav(false);
+        setShowHeader(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // 初始化
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  const fetchMoreData = () => {
-    if (!news || displayedNews.length >= news.length) {
-      setHasMore(false);
-      return;
-    }
-    setTimeout(() => {
-      setDisplayedNews(prev => [
-        ...prev,
-        ...news.slice(prev.length, prev.length + 12)
-      ]);
-      if (displayedNews.length + 12 >= news.length) setHasMore(false);
-    }, 500);
-  };
-
-  // Clear all news cache and refresh all sources
-  const handleClearCache = async () => {
-    clearNewsCache(['douyin', 'bilibili', 'netease', 'baidu']);
-    setDisplayedNews([]);
-    setHasMore(true);
-    refresh();
+  const handleSourceSwitch = (newSource: string) => {
+    localStorage.removeItem(`news_${currentSource}`);
+    setCurrentSource(newSource);
   };
 
   return (
@@ -84,284 +61,126 @@ const HomePage: React.FC = () => {
         <title>{t('pageTitle')}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </Head>
-      <header style={{
-        width: '100%',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        background: 'rgba(255,255,255,0.85)',
-        backdropFilter: 'blur(12px)',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-        borderBottom: '1px solid #f2f3f7',
-        padding: '0 0 0 0',
-        marginBottom: 16,
-      }}>
-        <div style={{
-          maxWidth: 1200,
-          margin: '0 auto',
-          padding: '18px 32px 12px 32px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          <span className="header-title" style={{
-            fontSize: 32,
-            fontWeight: 700,
-            letterSpacing: '-1px',
-            color: '#222',
-            fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
-            textShadow: '0 1px 2px rgba(0,0,0,0.03)',
-            transition: 'color 0.18s',
-            cursor: 'pointer',
-          }}>
-            <i className="fa fa-fire" style={{ color: '#ff3b30', marginRight: 12, fontSize: 32, verticalAlign: 'middle' }} aria-hidden="true" />
-            {t('appTitle')}
-          </span>
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 22 }}>
-            <a href={LINKS.github} target="_blank" rel="noopener noreferrer" title={t('github')} style={{ color: '#222', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <i className="fa fa-github" aria-hidden="true" style={{ fontSize: 24, verticalAlign: 'middle' }} />
-              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>{t('github')}</span>
-            </a>
-            <a href={LINKS.linkedin} target="_blank" rel="noopener noreferrer" title={t('linkedin')} style={{ color: '#0077b5', fontSize: 22, transition: 'color 0.18s', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <i className="fa fa-linkedin-square" aria-hidden="true" style={{ fontSize: 24, verticalAlign: 'middle' }} />
-              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: '0.01em' }}>{t('linkedin')}</span>
-            </a>
-            <a href={LINKS.ranbot} target="_blank" rel="noopener noreferrer" title={t('ranbot')} style={{ color: '#222', fontSize: 18, fontWeight: 600, textDecoration: 'none', transition: 'color 0.18s' }}>{t('ranbot')}</a>
-            {/* Language Switcher */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 18 }}>
-              {(() => {
-                const LANGS = [
-                  { code: 'zh', label: t('lang.zh') },
-                  { code: 'en', label: t('lang.en') },
-                  { code: 'fr', label: t('lang.fr') },
-                  { code: 'ja', label: t('lang.ja') },
-                ];
-                const handleLanguageChange = (lang: string) => {
-                  router.push(router.asPath, router.asPath, { locale: lang });
-                };
 
-                return (
-                  <>
-                    <FaGlobe
-                      style={{
-                        fontSize: 20,
-                        color: LANGS.some(l => l.code === i18n.language) ? '#ff3b30' : '#bbb',
-                        marginRight: 2,
-                        verticalAlign: 'middle',
-                        transition: 'color 0.18s',
-                      }}
-                    />
-                    {LANGS.map((lang, idx) => (
-                      <React.Fragment key={lang.code}>
-                        <button
-                          onClick={() => handleLanguageChange(lang.code)}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            color: i18n.language === lang.code ? '#ff3b30' : '#222',
-                            fontWeight: i18n.language === lang.code ? 700 : 500,
-                            fontSize: 17,
-                            padding: '4px 10px',
-                            borderRadius: 8,
-                            cursor: 'pointer',
-                            transition: 'color 0.18s, background 0.18s',
-                            outline: 'none',
-                            textDecoration: i18n.language === lang.code ? 'underline' : 'none',
-                          }}
-                          aria-pressed={i18n.language === lang.code}
-                        >
-                          {lang.label}
-                        </button>
-                        {idx < LANGS.length - 1 && (
-                          <span style={{ color: '#bbb', fontSize: 15, fontWeight: 400 }}>|</span>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </>
-                );
-              })()}
-            </div>
-          </nav>
-        </div>
-      </header>
-      <main style={{ marginBottom: 32 }}>
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 16px' }}>
-          {bannerImg && (
-            <div
+      <div
+        ref={headerRef}
+        style={{
+          position: 'relative',
+          zIndex: 120,
+          transition: 'opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1)',
+          opacity: showHeader ? 1 : 0,
+          transform: showHeader ? 'translateY(0)' : 'translateY(-32px)',
+          pointerEvents: showHeader ? 'auto' : 'none',
+          height: showHeader ? undefined : 0,
+        }}
+      >
+        <Header />
+      </div>
+
+      <section style={{
+        display: 'flex',
+        flexDirection: 'column',
+        paddingTop: '10vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%)',
+        fontFamily: 'SF Pro Display, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
+        textAlign: 'center',
+      }}>
+        <h1 style={{
+          fontSize: '2rem',
+          fontWeight: 800,
+          color: '#444',
+          marginBottom: 48,
+          maxWidth: '50vw',
+          lineHeight: 1.4,
+          textShadow: '0 1px 4px rgba(60,60,60,0.03)'
+        }}>
+          <Link href={`/`} passHref legacyBehavior>
+            <a
               style={{
-                width: '100%',
-                height: 150,
-                borderRadius: 16,
-                boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-                backgroundImage: `url(${bannerImg})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'flex-end',
-                overflow: 'hidden',
-                position: 'relative',
-                margin: '0 auto 24px auto',
+                color: 'inherit',
+                textDecoration: 'none',
+                cursor: 'pointer'
               }}
-              aria-label="热点新闻"
-            />
-          )}
-          <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
-            <div style={{
-              display: 'inline-flex',
-              borderRadius: 24,
-              background: '#f2f3f7',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-              overflow: 'hidden',
-              minHeight: 64,
-            }}>
-              {SOURCES.map(s => (
-                <button
-                  key={s.key}
-                  onClick={() => handleSourceSwitch(s.key)}
-                  style={{
-                    padding: '18px 48px',
-                    fontSize: 22,
-                    fontWeight: 700,
-                    border: 'none',
-                    background: source === s.key ? '#fff' : 'transparent',
-                    color: source === s.key ? '#ff3b30' : '#222',
-                    boxShadow: source === s.key ? '0 4px 16px rgba(0,0,0,0.10)' : 'none',
-                    transition: 'all 0.18s',
-                    cursor: 'pointer',
-                    outline: 'none',
-                    borderRight: s.key !== SOURCES[SOURCES.length - 1].key ? '1px solid #e0e0e0' : 'none',
-                    borderRadius: 24,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                  }}
-                  aria-pressed={source === s.key}
-                >
-                  <i className={`fa ${s.icon}`} style={{ color: s.color, fontSize: 24, marginRight: 10, verticalAlign: 'middle' }} aria-hidden="true" />
-                  {t(`source.${s.key}`)}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={handleClearCache}
-              aria-label="Clear cache and refresh all"
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                border: 'none',
-                background: '#f2f3f7',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                marginLeft: 8,
-                transition: 'background 0.18s, box-shadow 0.18s',
-              }}
-              onMouseOver={e => (e.currentTarget.style.background = '#e5e5ea')}
-              onMouseOut={e => (e.currentTarget.style.background = '#f2f3f7')}
             >
-              <FaSyncAlt size={22} color="#888" style={{ transition: 'color 0.18s' }} />
-            </button>
-          </div>
-          <div className="news-grid" style={{ width: '100%', boxSizing: 'border-box' }}>
-            {loading ? (
-              <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '48px 0' }}>
-                <div className="apple-spinner" />
-                <div style={{ marginTop: 12, color: '#888', fontSize: 16 }}>{t('loading')}</div>
-              </div>
-            ) : error ? (
-              <p style={{ color: 'red', textAlign: 'center', gridColumn: '1 / -1' }}>{error.message || t('error')}</p>
-            ) : displayedNews.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#aaa', gridColumn: '1 / -1' }}>{t('noNews')}</p>
-            ) : (
-              <InfiniteScroll
-                dataLength={displayedNews.length}
-                next={fetchMoreData}
-                hasMore={hasMore}
-                loader={<div style={{ textAlign: 'center', padding: 32 }}><div className="apple-spinner" /><div style={{ marginTop: 12, color: '#888', fontSize: 16 }}>{t('loading')}</div></div>}
-                style={{ overflow: 'visible' }}
-              >
-                <Masonry
-                  breakpointCols={{
-                    default: 3,
-                    1200: 2,
-                    900: 2,
-                    700: 1,
-                  }}
-                  className="masonry-grid"
-                  columnClassName="masonry-grid_column"
-                >
-                  {displayedNews.map((item) => (
-                    <NewsCard key={item.rank + item.title} {...item} />
-                  ))}
-                </Masonry>
-              </InfiniteScroll>
-            )}
-          </div>
+            {t('pageTitle').split(' - ')[1]}
+            </a>
+          </Link>
+        </h1>
+
+        <h2 style={{
+          fontSize: '1.5rem',
+          fontWeight: 500,
+          color: '#444',
+          marginBottom: 48,
+          maxWidth: '50vw',
+          lineHeight: 1.4,
+          textShadow: '0 1px 4px rgba(60,60,60,0.03)'
+        }}>
+          {t('pageDescription')}
+        </h2>
+
+        <div
+          style={{
+            position: stickSourceNav ? 'fixed' : 'static',
+            top: 0,
+            left: 0,
+            width: '100%',
+            zIndex: 200,
+            background: stickSourceNav ? 'rgba(255,255,255,0.97)' : 'transparent',
+            boxShadow: stickSourceNav ? '0 2px 12px rgba(0,0,0,0.07)' : 'none',
+            transition: 'all 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1)',
+            opacity: stickSourceNav ? 1 : 0,
+            transform: stickSourceNav ? 'translateY(0)' : 'translateY(-32px)',
+            pointerEvents: stickSourceNav ? 'auto' : 'none',
+          }}
+        >
+          <SourceNav
+            sources={SOURCES.map(s => ({
+              key: s.key,
+              label: t(`source.${s.key}`),
+              icon: s.icon,
+              color: s.color,
+              active: currentSource === s.key,
+            }))}
+            onSourceChange={handleSourceSwitch}
+            stickToTop={stickSourceNav}
+          />
         </div>
-        <style jsx global>{`
-          .masonry-grid {
-            display: flex;
-            margin-left: -24px;
-            width: auto;
-          }
-          .masonry-grid_column {
-            padding-left: 24px;
-            background-clip: padding-box;
-          }
-          .masonry-grid_column > div {
-            margin-bottom: 32px;
-          }
-          @media (max-width: 900px) {
-            .masonry-grid_column {
-              padding-left: 12px;
-            }
-            .masonry-grid_column > div {
-              margin-bottom: 18px;
-            }
-          }
-          @media (max-width: 600px) {
-            .masonry-grid {
-              margin-left: -6px;
-            }
-            .masonry-grid_column {
-              padding-left: 6px;
-            }
-            .masonry-grid_column > div {
-              margin-bottom: 10px;
-            }
-          }
-          .apple-spinner {
-            display: inline-block;
-            width: 44px;
-            height: 44px;
-            border: 4px solid #e0e0e0;
-            border-top: 4px solid #0071e3;
-            border-radius: 50%;
-            animation: apple-spin 0.8s linear infinite;
-          }
-          @keyframes apple-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-          header nav a:hover {
-            color: #ff3b30 !important;
-            text-decoration: underline;
-          }
-          .header-title:hover {
-            color: #ff3b30 !important;
-          }
-        `}</style>
-      </main>
+
+        <div
+          style={{
+            maxWidth: 1440,
+            minHeight: '30vh',
+            margin: '20px auto',
+            padding: '0 16px 48px 16px',
+            width: '100%',
+            boxSizing: 'border-box',
+          }}>
+          {loading ? (
+            <div style={{ textAlign: 'center', margin: '32px 0', color: '#888', fontSize: 16 }}>{t('loading', 'Loading...')}</div>
+          ) : error ? (
+            <div style={{ textAlign: 'center', margin: '32px 0', color: '#e74c3c', fontSize: 16 }}>{t('error', '加载失败')}</div>
+          ) : (
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="masonry-grid"
+              columnClassName="masonry-grid_column"
+            >
+              {newsList.map((item, idx) => (
+                <NewsCard key={item.title + idx} {...item} position={item.position || idx + 1} />
+              ))}
+            </Masonry>
+          )}
+        </div>
+      </section>
+
       <footer style={{
         width: '100%',
+        minHeight: '10vh',
         background: 'rgba(255,255,255,0.92)',
         borderTop: '1px solid #f2f3f7',
-        marginTop: 48,
         padding: '36px 0 24px 0',
         textAlign: 'center',
         fontSize: 15,
@@ -396,6 +215,18 @@ const HomePage: React.FC = () => {
             Encore Shao
         </span>
         <style jsx global>{`
+          .masonry-grid {
+            display: flex;
+            margin-left: -24px;
+            width: auto;
+          }
+          .masonry-grid_column {
+            padding-left: 24px;
+            background-clip: padding-box;
+          }
+          .masonry-grid_column > .news-card {
+            margin-bottom: 32px;
+          }
           footer nav a:hover {
             color: #ff3b30 !important;
             text-decoration: underline;

@@ -36,4 +36,4 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 ## Credits
 
 - Built by Encore Shao
-- [GitHub](https://github.com/ranbot-ai) | [LinkedIn](https://linkedin.com/in/ranbot-ai) | [RanBOT](https://ranbot.online)
+- [GitHub](https://github.com/ranbot-ai) | [LinkedIn](https://linkedin.com/company/ranbot-ai) | [RanBOT](https://ranbot.online)

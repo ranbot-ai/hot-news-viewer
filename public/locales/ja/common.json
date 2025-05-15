@@ -2,7 +2,7 @@
   "appTitle": "ホットニュースビューア",
   "pageTitle": "ホットニュース - 抖音、B站、网易新闻、百度热搜",
   "source": {
-    "douyin": "Douyin",
+    "douyin": "TikTok",
     "bilibili": "Bilibili",
     "netease": "163ニュース",
     "baidu": "百度"
@@ -39,5 +39,6 @@
     "imageProxyFailed": "画像の取得に失敗しました",
     "unknownSource": "不明またはサポートされていないソースです。",
     "fetchSource": "ソースのニュース取得に失敗しました: {{source}}"
-  }
+  },
+  "pageDescription": "TikTok、Bilibili、163ニュース、百度ホットサーチの最新トレンドを素早く美しく安全にチェック。すべての人のためのニュース体験。"
 }

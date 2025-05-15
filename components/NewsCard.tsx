@@ -56,9 +56,9 @@ const NewsCard: React.FC<NewsCardProps> = ({
   title, position, rank, videoCount, viewsCount, likesCount, commentsCount, coverImg, hotValue, eventDate, owner, link, pubLocation, source }) => {
   const formattedDate = formatEventDate(eventDate);
   const { t } = useTranslation('common');
-  // Random image height between 40% and 100% of 220px
-  const minHeight = 0.4 * 220;
-  const maxHeight = 220;
+  // Random image height between 8px and 320px
+  const minHeight = 80;
+  const maxHeight = 320;
   const imgHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1) + minHeight);
   return (
     <div
@@ -109,7 +109,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
       </span>
 
       {coverImg && (
-        <div style={{ width: '100%', height: imgHeight, minHeight: minHeight, maxHeight: maxHeight, background: '#f8f8f8', position: 'relative' }}>
+        <div style={{ width: '100%', height: imgHeight, minHeight, maxHeight, background: '#f8f8f8', position: 'relative' }}>
           <Image
             src={getImageSrc(coverImg)}
             alt={title}

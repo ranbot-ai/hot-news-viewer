@@ -1,8 +1,8 @@
 {
   "appTitle": "Hot News",
-  "pageTitle": "Hot News - Douyin, Bilibili, 163 News, Baidu Hot Search",
+  "pageTitle": "Hot News - TikTok, Bilibili, 163 News, Baidu Hot Search",
   "source": {
-    "douyin": "Douyin",
+    "douyin": "TikTok",
     "bilibili": "Bilibili",
     "netease": "163 News",
     "baidu": "Baidu"
@@ -28,5 +28,6 @@
     "zh": "Chinese",
     "fr": "French",
     "ja": "Japanese"
-  }
+  },
+  "pageDescription": "Stay updated with trending news from TikTok, Bilibili, 163 News, and Baidu Hot Search. Fast, beautiful, and secure news for everyone."
 }

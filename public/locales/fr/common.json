@@ -1,8 +1,8 @@
 {
-  "appTitle": "Hot News Viewer",
-  "pageTitle": "Hot News - Douyin, Bilibili, 163 News, Baidu Hot Search",
+  "appTitle": "Hot News",
+  "pageTitle": "Hot News - TikTok, Bilibili, 163 News, Baidu Hot Search",
   "source": {
-    "douyin": "Douyin",
+    "douyin": "TikTok",
     "bilibili": "Bilibili",
     "netease": "163 Actualités",
     "baidu": "Baidu"
@@ -39,5 +39,6 @@
     "imageProxyFailed": "Échec de la récupération de l'image",
     "unknownSource": "Source inconnue ou non prise en charge.",
     "fetchSource": "Échec de la récupération des actualités pour la source : {{source}}"
-  }
+  },
+  "pageDescription": "Restez informé des tendances sur TikTok, Bilibili, 163 Actualités et Baidu Hot Search. L'actualité rapide, belle et sécurisée pour tous."
 }
