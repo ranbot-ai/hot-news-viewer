@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import NewsCard, { NewsCardProps } from '../components/NewsCard';
+import NewsCardPlaceholder from '../components/NewsCardPlaceholder';
 import Head from 'next/head';
 import Masonry from 'react-masonry-css';
 import { useTranslation } from 'next-i18next';
@@ -158,7 +159,15 @@ const HomePage: React.FC = () => {
             boxSizing: 'border-box',
           }}>
           {loading ? (
-            <div style={{ textAlign: 'center', margin: '32px 0', color: '#888', fontSize: 16 }}>{t('loading', 'Loading...')}</div>
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="masonry-grid"
+              columnClassName="masonry-grid_column"
+            >
+              {Array.from({ length: 8 }).map((_, idx) => (
+                <NewsCardPlaceholder key={idx} />
+              ))}
+            </Masonry>
           ) : error ? (
             <div style={{ textAlign: 'center', margin: '32px 0', color: '#e74c3c', fontSize: 16 }}>{t('error', '加载失败')}</div>
           ) : (
