@@ -7,7 +7,6 @@ import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { LINKS } from '../lib/links';
 import { SOURCES } from '../lib/sources';
-import { useRouter } from 'next/router';
 import { useCachedFetch } from '../hooks/useCachedFetch';
 import Header from '../components/Header';
 import SourceNav from '../components/SourceNav';
@@ -15,7 +14,7 @@ import Link from 'next/link';
 
 
 const HomePage: React.FC = () => {
-  const { t, i18n } = useTranslation('common');
+  const { t } = useTranslation('common');
   const headerRef = useRef<HTMLDivElement>(null);
   const [stickSourceNav, setStickSourceNav] = React.useState(false);
   const [showHeader, setShowHeader] = React.useState(true);
@@ -131,9 +130,9 @@ const HomePage: React.FC = () => {
             background: stickSourceNav ? 'rgba(255,255,255,0.97)' : 'transparent',
             boxShadow: stickSourceNav ? '0 2px 12px rgba(0,0,0,0.07)' : 'none',
             transition: 'all 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1)',
-            opacity: stickSourceNav ? 1 : 0,
+            opacity: stickSourceNav ? 1 : 1,
             transform: stickSourceNav ? 'translateY(0)' : 'translateY(-32px)',
-            pointerEvents: stickSourceNav ? 'auto' : 'none',
+            pointerEvents: stickSourceNav ? 'auto' : 'auto',
           }}
         >
           <SourceNav

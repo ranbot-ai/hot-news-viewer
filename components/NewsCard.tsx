@@ -76,6 +76,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         overflow: 'hidden',
         position: 'relative',
         boxSizing: 'border-box',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.13)',
       }}
       className="news-card"
     >
