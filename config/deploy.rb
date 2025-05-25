@@ -37,11 +37,9 @@ task :yarn_install do
   command %{$(which yarn) build}
 end
 
-# desc "Restarting application"
-# task :restart do
-#   comment "Restarting application"
-#   command %{sudo monit restart -g #{fetch(:monit_group)} || true}
-# end
+task :restart_pm2 do
+  command %{$(which pm2) restart "hot-news-viewer" || $(which pm2) start yarn --name "hot-news-viewer" --env production -- start}
+end
 
 desc 'Deploys the current version to the server.'
 task :deploy do
@@ -50,7 +48,6 @@ task :deploy do
     invoke :'deploy:link_shared_paths'
     invoke :'remote_environment'
     invoke :'yarn_install'
-
-    command %{$(which pm2) start yarn --name "hot-news-viewer" --env production -- start}
+    invoke :'restart_pm2'
   end
 end
