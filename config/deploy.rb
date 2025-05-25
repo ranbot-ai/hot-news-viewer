@@ -38,7 +38,7 @@ task :yarn_install do
 end
 
 task :restart_pm2 do
-  command %{$(which pm2) restart "hot-news-viewer" || $(which pm2) start yarn --name "hot-news-viewer" --env production -- start}
+  command %{$(which pm2) restart "hot-news-viewer" || $(which pm2) start ecosystem.config.js}
 end
 
 desc 'Deploys the current version to the server.'
