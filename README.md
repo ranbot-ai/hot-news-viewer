@@ -33,6 +33,15 @@ Then open [http://localhost:3000](http://localhost:3000) in your browser.
 - Utilities for formatting are in `lib/`.
 - PRs and suggestions welcome!
 
+## Server Setup
+
+- nvm setup
+
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+nvm install v22.16.0
+```
+
 ## Credits
 
 - Built by Encore Shao

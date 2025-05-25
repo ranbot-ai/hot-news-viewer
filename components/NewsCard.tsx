@@ -2,7 +2,7 @@ import React from 'react';
 import { formatEventDate, formatNumberShort } from '../lib/common';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
-import { PROXY_IMAGE_DOMAINS } from '../config/imageProxyDomains';
+import { PROXY_IMAGE_DOMAINS } from '../utils/imageProxyDomains';
 
 export interface NewsCardProps {
   title: string;
