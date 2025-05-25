@@ -18,7 +18,7 @@ set :nodejs_version, '22.16.0'
 set :user, ENV['SSH_USER'] || `whoami`.chop
 set :forward_agent, true
 
-set :shared_dirs, fetch(:shared_dirs, []).push('node_modules', 'log', 'config', 'public', 'yarn_cache')
+set :shared_dirs, fetch(:shared_dirs, []).push('node_modules', 'log', 'config', 'yarn_cache')
 set :shared_files, fetch(:shared_files, []).push('.env')
 
 set :yarn_cache_folder, "#{fetch(:shared_path)}/yarn_cache"
