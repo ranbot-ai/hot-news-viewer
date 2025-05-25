@@ -51,6 +51,6 @@ task :deploy do
     invoke :'remote_environment'
     invoke :'yarn_install'
 
-    # command %[pm2 startOrReload --env production] # see below
+    command %{$(which pm2) start yarn --name "hot-news-viewer" --env production -- start}
   end
 end
